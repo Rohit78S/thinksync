@@ -1,0 +1,3014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AyurSutra - Advanced Health Management System</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #3730a3;
+            --secondary: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #22c55e;
+            --dark: #1f2937;
+            --dark-light: #374151;
+            --light: #f8fafc;
+            --light-dark: #e5e7eb;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            --radius: 16px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --glass: rgba(255, 255, 255, 0.95);
+        }
+
+        [data-theme="dark"] {
+            --primary: #818cf8;
+            --primary-dark: #6366f1;
+            --secondary: #34d399;
+            --danger: #f87171;
+            --warning: #fbbf24;
+            --success: #4ade80;
+            --dark: #f8fafc;
+            --dark-light: #e5e7eb;
+            --light: #1e293b;
+            --light-dark: #334155;
+            --muted: #94a3b8;
+            --border: #334155;
+            --gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            --glass: rgba(30, 41, 59, 0.95);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--gradient);
+            min-height: 100vh;
+            color: var(--dark);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-x: hidden;
+            background: linear-gradient(rgba(175, 189, 248, 0.7), rgba(118,75,162,0.7)), 
+                url("https://uploads.onecompiler.io/43c8gtkh3/43w86f3ec/the%20one3.jpg") no-repeat center center fixed;
+        }
+
+        /* Login Page */
+        .login-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: all 0.5s ease;
+        }
+
+        .login-container.hidden {
+            opacity: 0;
+            transform: translateY(-100vh);
+            pointer-events: none;
+        }
+
+        .login-box {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            padding: 3rem;
+            border-radius: 24px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 100%;
+            max-width: 420px;
+            animation: loginSlideIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        @keyframes loginSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-logo {
+            width: 80px;
+            height: 80px;
+            background: var(--primary);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2rem;
+            color: white;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .login-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .login-subtitle {
+            color: var(--muted);
+            font-size: 1rem;
+        }
+
+        .login-form {
+            space-y: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            background: var(--light);
+            color: var(--dark);
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        }
+
+        .form-group .form-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            margin-top: 12px;
+        }
+
+        .login-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: var(--radius);
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .demo-info {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 1rem;
+            border-radius: var(--radius);
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+
+        .demo-info p {
+            margin: 0;
+            font-size: 0.875rem;
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        /* Header */
+        .header {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--dark);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .menu-btn:hover {
+            background: rgba(79, 70, 229, 0.1);
+            color: var(--primary);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .logo-text h1 {
+            color: var(--primary);
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .logo-text p {
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 280px;
+            height: 100vh;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--border);
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            z-index: 2000;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--muted);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            margin-left: auto;
+        }
+
+        .sidebar-close:hover {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: var(--radius);
+            background: transparent;
+            border: none;
+            color: var(--dark);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            font-size: 1rem;
+        }
+
+        .sidebar-item:hover {
+            background: rgba(79, 70, 229, 0.1);
+            color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .sidebar-item.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .sidebar-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: none;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--dark);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--primary);
+            background: rgba(79, 70, 229, 0.05);
+        }
+
+        /* Sidebar Overlay */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(2px);
+            z-index: 1500;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Buttons */
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--border);
+            color: var(--dark);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary);
+            background: rgba(79, 70, 229, 0.05);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .main-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card h2 {
+            color: var(--dark);
+            font-size: 1.25rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Role Selection */
+        .role-selection {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .welcome-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.2rem;
+            color: var(--muted);
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .role-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .role-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            padding: 3rem 2rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .role-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .role-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .role-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
+        }
+
+        .role-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .role-card:hover .role-icon {
+            transform: scale(1.1);
+            color: var(--secondary);
+        }
+
+        .role-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .role-card p {
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        /* Forms */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        /* Health Score */
+        .health-score {
+            background: linear-gradient(135deg, var(--success), var(--secondary));
+            color: white;
+            padding: 2rem;
+            border-radius: var(--radius);
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .health-score::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.1); opacity: 0.3; }
+        }
+
+        .health-score-value {
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .health-score-label {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            z-index: 3000;
+            transform: translateX(400px);
+            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            background: var(--danger);
+        }
+
+        .notification.warning {
+            background: var(--warning);
+        }
+
+        /* Hide utility */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Doctor Cards */
+        .doctors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .doctor-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border-radius: var(--radius);
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .doctor-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .doctor-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            margin: 0 auto 1rem;
+        }
+
+        .time-slot {
+            display: inline-block;
+            background: var(--light-dark);
+            color: var(--dark);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            margin: 0.25rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+
+        .time-slot:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .time-slot.selected {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary-dark);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            text-align: center;
+            color: white;
+        }
+
+        .patients-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--light);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .patients-table th,
+        .patients-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .patients-table th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        .patients-table tr:hover {
+            background: rgba(79, 70, 229, 0.05);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+        }
+
+        .status-pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .appointment-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .file-upload-area {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload-area:hover {
+            border-color: var(--primary);
+            background: rgba(79, 70, 229, 0.05);
+        }
+
+        .file-upload-area.dragover {
+            border-color: var(--primary);
+            background: rgba(79, 70, 229, 0.1);
+        }
+
+        .uploaded-files {
+            margin-top: 1rem;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem;
+            background: var(--light-dark);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-content {
+                padding: 0 1rem;
+                margin: 1rem auto;
+            }
+            
+            .role-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .welcome-title {
+                font-size: 2rem;
+            }
+            
+            .login-box {
+                margin: 1rem;
+                padding: 2rem;
+            }
+
+            .sidebar {
+                width: 100vw;
+                left: -100vw;
+            }
+
+            .sidebar.active {
+                left: 0;
+            }
+
+            .doctors-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <!-- Login Container -->
+    <div class="login-container" id="loginContainer">
+        <div class="login-box">
+            <div class="login-header">
+                <div class="login-logo">
+                    <i class="fas fa-om"></i>
+                </div>
+                <h1 class="login-title">AyurSutra</h1>
+                <p class="login-subtitle">Advanced Health Management System</p>
+            </div>
+            
+            <form class="login-form" id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Enter your username" required>
+                    <i class="fas fa-user form-icon"></i>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter your password" required>
+                    <i class="fas fa-lock form-icon"></i>
+                </div>
+                
+                <button type="submit" class="login-btn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Sign In
+                </button>
+            </form>
+            
+            <div class="demo-info">
+                <p><i class="fas fa-info-circle"></i> Patient: patient/password | Doctor: doctor/password | Admin: admin/password</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-om"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>AyurSutra</h1>
+                </div>
+            </div>
+            <button class="sidebar-close" onclick="closeSidebar()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <nav class="sidebar-nav" id="sidebarNav">
+            <!-- Dynamic navigation based on user role -->
+        </nav>
+        
+        <div class="sidebar-footer">
+            <button class="theme-toggle" onclick="toggleTheme()">
+                <i class="fas fa-palette"></i>
+                <span>Toggle Theme</span>
+            </button>
+            
+            <button class="sidebar-item" onclick="logout()" style="margin-top: 1rem; color: var(--danger);">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header hidden" id="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <button class="menu-btn" onclick="openSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-om"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>AyurSutra</h1>
+                        <p>Advanced Health Management System</p>
+                    </div>
+                </div>
+            </div>
+            <div class="header-actions">
+                <span id="userRole" style="margin-right: 1rem; color: var(--muted);"></span>
+                <button class="btn-outline" onclick="exportData()">
+                    <i class="fas fa-download"></i> Export
+                </button>
+                <button class="btn btn-secondary" onclick="importData()">
+                    <i class="fas fa-upload"></i> Import
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-content hidden" id="mainContent">
+        <!-- Home Page -->
+        <div id="homePage">
+            <div class="role-selection">
+                <h1 class="welcome-title">Welcome to AyurSutra</h1>
+                <p class="welcome-subtitle">
+                    Choose your portal to access personalized health management tools powered by ancient Ayurvedic wisdom and modern technology.
+                </p>
+                
+                <div class="role-options">
+                    <div class="role-card" onclick="showPage('patient')">
+                        <div class="role-icon">
+                            <i class="fas fa-user-heart"></i>
+                        </div>
+                        <h3>Patient Portal</h3>
+                        <p>
+                            Take comprehensive health assessments, discover your unique dosha constitution, 
+                            receive personalized Ayurvedic recommendations, upload medical prescriptions, 
+                            and schedule appointments with qualified practitioners.
+                        </p>
+                    </div>
+                    
+                    <div class="role-card" onclick="showPage('hospital')">
+                        <div class="role-icon">
+                            <i class="fas fa-hospital"></i>
+                        </div>
+                        <h3>Healthcare Provider</h3>
+                        <p>
+                            Access comprehensive patient management tools, view detailed health assessments, 
+                            manage practitioner profiles, schedule appointments, and monitor patient 
+                            progress with advanced analytics and reporting capabilities.
+                        </p>
+                    </div>
+
+                    <div class="role-card" onclick="showPage('booking')">
+                        <div class="role-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <h3>Book Appointment</h3>
+                        <p>
+                            Schedule consultations with experienced Ayurvedic practitioners, 
+                            view available time slots, and manage your upcoming appointments 
+                            with our automated scheduling system.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Patient Portal -->
+        <div id="patientPage" class="hidden">
+            <!-- Health Assessment -->
+            <div class="card fade-in">
+                <div class="card-header">
+                    <h2><i class="fas fa-clipboard-list"></i> Health Assessment</h2>
+                    <button class="btn" onclick="clearAssessment()">
+                        <i class="fas fa-redo"></i> Reset Form
+                    </button>
+                </div>
+                <p style="color: var(--muted); margin-bottom: 2rem;">Complete this comprehensive assessment to discover your Ayurvedic constitution and receive personalized health recommendations.</p>
+
+                <form id="healthAssessmentForm" class="form-grid">
+                    <div>
+                        <h3 style="margin-bottom: 1rem; color: var(--primary);">Personal Information</h3>
+                        <div class="form-group">
+                            <label>Full Name *</label>
+                            <input type="text" id="fullName" required placeholder="Enter your full name">
+                        </div>
+                        <div class="form-group">
+                            <label>Age *</label>
+                            <input type="number" id="age" required min="1" max="120" placeholder="Enter your age">
+                        </div>
+                        <div class="form-group">
+                            <label>Gender *</label>
+                            <select id="gender" required>
+                                <option value="">Select Gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Weight (kg) *</label>
+                            <input type="number" id="weight" required step="0.1" placeholder="Enter weight">
+                        </div>
+                        <div class="form-group">
+                            <label>Height (cm) *</label>
+                            <input type="number" id="height" required placeholder="Enter height">
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 style="margin-bottom: 1rem; color: var(--primary);">Physical Characteristics</h3>
+                        <div class="form-group">
+                            <label>Body Type *</label>
+                            <select id="bodyType" required>
+                                <option value="">Select Body Type</option>
+                                <option value="vata">Thin, Light Build (Vata)</option>
+                                <option value="pitta">Medium Build (Pitta)</option>
+                                <option value="kapha">Large, Heavy Build (Kapha)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Skin Type *</label>
+                            <select id="skinType" required>
+                                <option value="">Select Skin Type</option>
+                                <option value="vata">Dry, Rough Skin</option>
+                                <option value="pitta">Oily, Sensitive Skin</option>
+                                <option value="kapha">Smooth, Thick Skin</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Energy Level *</label>
+                            <select id="energyLevel" required>
+                                <option value="">Select Energy Level</option>
+                                <option value="vata">Variable, In Bursts</option>
+                                <option value="pitta">Intense, Focused</option>
+                                <option value="kapha">Steady, Enduring</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Sleep Pattern *</label>
+                            <select id="sleepPattern" required>
+                                <option value="">Select Sleep Pattern</option>
+                                <option value="vata">Light, Restless Sleep</option>
+                                <option value="pitta">Moderate, Sound Sleep</option>
+                                <option value="kapha">Deep, Prolonged Sleep</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 style="margin-bottom: 1rem; color: var(--primary);">Mental & Emotional</h3>
+                        <div class="form-group">
+                            <label>Stress Response *</label>
+                            <select id="stressResponse" required>
+                                <option value="">How do you handle stress?</option>
+                                <option value="vata">Become anxious, worried</option>
+                                <option value="pitta">Become irritable, angry</option>
+                                <option value="kapha">Become withdrawn, sluggish</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Appetite Pattern *</label>
+                            <select id="appetite" required>
+                                <option value="">Your appetite is usually</option>
+                                <option value="vata">Irregular, varies daily</option>
+                                <option value="pitta">Strong, intense hunger</option>
+                                <option value="kapha">Steady, moderate</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Current Health Concerns</label>
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; margin-top: 0.5rem;">
+                                <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal;">
+                                    <input type="checkbox" name="concerns" value="digestive"> Digestive Issues
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal;">
+                                    <input type="checkbox" name="concerns" value="anxiety"> Anxiety/Stress
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal;">
+                                    <input type="checkbox" name="concerns" value="insomnia"> Sleep Problems
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal;">
+                                    <input type="checkbox" name="concerns" value="fatigue"> Chronic Fatigue
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal;">
+                                    <input type="checkbox" name="concerns" value="joint"> Joint Pain
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal;">
+                                    <input type="checkbox" name="concerns" value="skin"> Skin Problems
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 style="margin-bottom: 1rem; color: var(--primary);">Lifestyle</h3>
+                        <div class="form-group">
+                            <label>Activity Level *</label>
+                            <select id="activityLevel" required>
+                                <option value="">Select Activity Level</option>
+                                <option value="sedentary">Sedentary</option>
+                                <option value="moderate">Moderately Active</option>
+                                <option value="active">Very Active</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Diet Type</label>
+                            <select id="dietType">
+                                <option value="">Select Diet Type</option>
+                                <option value="omnivore">Omnivore</option>
+                                <option value="vegetarian">Vegetarian</option>
+                                <option value="vegan">Vegan</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Additional Notes</label>
+                            <textarea id="additionalNotes" rows="3" placeholder="Any additional health information..."></textarea>
+                        </div>
+                        <div style="text-align: center; margin-top: 2rem;">
+                            <button type="submit" class="btn" style="padding: 1rem 2rem; font-size: 1.1rem;">
+                                <i class="fas fa-microscope"></i> Analyze Health Profile
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Health Results -->
+            <div id="healthResults" class="hidden">
+                <div class="health-score">
+                    <div class="health-score-value" id="healthScoreValue">--</div>
+                    <div class="health-score-label">Ayurvedic Wellness Score</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-chart-pie"></i> Your Dosha Constitution</h2>
+                        <button class="btn" onclick="generatePDF()">
+                            <i class="fas fa-file-pdf"></i> Download Report
+                        </button>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                        <div>
+                            <div style="position: relative; height: 300px; margin: 2rem 0;">
+                                <canvas id="doshaChart"></canvas>
+                            </div>
+                        </div>
+                        <div>
+                            <div id="doshaBreakdown"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-lightbulb"></i> Personalized Recommendations</h2>
+                    </div>
+                    <div id="recommendations" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;"></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-upload"></i> Upload Medical Prescriptions</h2>
+                    </div>
+                    <div class="file-upload-area" id="fileUploadArea" onclick="document.getElementById('fileInput').click()">
+                        <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--muted); margin-bottom: 1rem;"></i>
+                        <h3>Upload Prescription Files</h3>
+                        <p>Click to browse or drag and drop files here</p>
+                        <p style="font-size: 0.875rem; color: var(--muted);">Supported formats: PDF, JPG, PNG, DOC</p>
+                    </div>
+                    <input type="file" id="fileInput" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" style="display: none;">
+                    <div id="uploadedFiles" class="uploaded-files"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hospital Portal -->
+        <div id="hospitalPage" class="hidden">
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-hospital"></i> Healthcare Provider Dashboard</h2>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card" style="background: var(--primary);">
+                        <div style="font-size: 2rem; font-weight: 800;" id="totalPatients">0</div>
+                        <div>Total Patients</div>
+                    </div>
+                    <div class="stat-card" style="background: var(--secondary);">
+                        <div style="font-size: 2rem; font-weight: 800;" id="activeAppointments">0</div>
+                        <div>Today's Appointments</div>
+                    </div>
+                    <div class="stat-card" style="background: var(--warning);">
+                        <div style="font-size: 2rem; font-weight: 800;" id="pendingReviews">0</div>
+                        <div>Pending Reviews</div>
+                    </div>
+                    <div class="stat-card" style="background: var(--danger);">
+                        <div style="font-size: 2rem; font-weight: 800;" id="criticalAlerts">0</div>
+                        <div>Critical Alerts</div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-users"></i> Patient Records</h2>
+                        <button class="btn" onclick="refreshPatientData()">
+                            <i class="fas fa-sync"></i> Refresh
+                        </button>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table class="patients-table" id="patientsTable">
+                            <thead>
+                                <tr>
+                                    <th>Patient Name</th>
+                                    <th>Age</th>
+                                    <th>Primary Dosha</th>
+                                    <th>Health Score</th>
+                                    <th>Last Visit</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="patientsTableBody">
+                                <!-- Dynamic content -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Panel (Only visible to admin users) -->
+            <div id="adminPanel" class="hidden">
+                <div class="card">
+                    <div class="card-header">
+                        <h2><i class="fas fa-user-cog"></i> Doctor Management</h2>
+                        <button class="btn" onclick="showAddDoctorForm()">
+                            <i class="fas fa-plus"></i> Add Doctor
+                        </button>
+                    </div>
+                    <div class="doctors-grid" id="doctorsGrid">
+                        <!-- Dynamic doctor cards -->
+                    </div>
+                </div>
+
+                <!-- Add Doctor Form -->
+                <div id="addDoctorForm" class="card hidden">
+                    <div class="card-header">
+                        <h2><i class="fas fa-user-md"></i> Add New Doctor</h2>
+                        <button class="btn-outline" onclick="hideAddDoctorForm()">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                    </div>
+                    <form onsubmit="addDoctor(event)" class="form-grid">
+                        <div>
+                            <div class="form-group">
+                                <label>Doctor Name *</label>
+                                <input type="text" id="doctorName" required placeholder="Enter doctor's full name">
+                            </div>
+                            <div class="form-group">
+                                <label>Specialization *</label>
+                                <select id="doctorSpecialization" required>
+                                    <option value="">Select Specialization</option>
+                                    <option value="Panchakarma">Panchakarma Specialist</option>
+                                    <option value="General">General Ayurvedic Medicine</option>
+                                    <option value="Pediatric">Pediatric Ayurveda</option>
+                                    <option value="Dermatology">Ayurvedic Dermatology</option>
+                                    <option value="Mental">Mental Health & Wellness</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Experience (Years) *</label>
+                                <input type="number" id="doctorExperience" required min="0" placeholder="Years of experience">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="form-group">
+                                <label>Consultation Fee *</label>
+                                <input type="number" id="doctorFee" required min="0" placeholder="Consultation fee in ₹">
+                            </div>
+                            <div class="form-group">
+                                <label>Available Days</label>
+                                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin-top: 0.5rem;">
+                                    <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal;">
+                                        <input type="checkbox" name="availableDays" value="monday"> Mon
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal;">
+                                        <input type="checkbox" name="availableDays" value="tuesday"> Tue
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal;">
+                                        <input type="checkbox" name="availableDays" value="wednesday"> Wed
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal;">
+                                        <input type="checkbox" name="availableDays" value="thursday"> Thu
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal;">
+                                        <input type="checkbox" name="availableDays" value="friday"> Fri
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal;">
+                                        <input type="checkbox" name="availableDays" value="saturday"> Sat
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal;">
+                                        <input type="checkbox" name="availableDays" value="sunday"> Sun
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Working Hours</label>
+                                <div style="display: flex; gap: 1rem; align-items: center;">
+                                    <input type="time" id="startTime" value="09:00">
+                                    <span>to</span>
+                                    <input type="time" id="endTime" value="17:00">
+                                </div>
+                            </div>
+                            <div style="text-align: center; margin-top: 2rem;">
+                                <button type="submit" class="btn">
+                                    <i class="fas fa-plus"></i> Add Doctor
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Booking Page -->
+        <div id="bookingPage" class="hidden">
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-calendar-check"></i> Book an Appointment</h2>
+                </div>
+                <div class="doctors-grid" id="availableDoctors">
+                    <!-- Available doctors will be populated here -->
+                </div>
+            </div>
+
+            <!-- Appointment Booking Form -->
+            <div id="appointmentModal" class="hidden" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); z-index: 3000; display: flex; align-items: center; justify-content: center;">
+                <div class="card" style="margin: 2rem; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto;">
+                    <div class="card-header">
+                        <h2><i class="fas fa-calendar-plus"></i> Book Appointment</h2>
+                        <button class="btn-outline" onclick="closeAppointmentModal()">
+                            <i class="fas fa-times"></i> Close
+                        </button>
+                    </div>
+                    
+                    <form class="appointment-form" onsubmit="bookAppointment(event)">
+                        <div id="selectedDoctorInfo" class="card" style="background: rgba(79, 70, 229, 0.1); margin-bottom: 2rem;">
+                            <!-- Selected doctor info will be displayed here -->
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Patient Name *</label>
+                            <input type="text" id="patientName" required placeholder="Enter patient's full name">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Contact Number *</label>
+                            <input type="tel" id="contactNumber" required placeholder="Enter contact number">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="patientEmail" placeholder="Enter email address">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Preferred Date *</label>
+                            <input type="date" id="appointmentDate" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Available Time Slots *</label>
+                            <div id="timeSlots" style="margin-top: 1rem;">
+                                <!-- Time slots will be populated dynamically -->
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Reason for Visit</label>
+                            <textarea id="visitReason" rows="3" placeholder="Describe your health concerns or reason for consultation..."></textarea>
+                        </div>
+                        
+                        <div style="text-align: center; margin-top: 2rem;">
+                            <button type="submit" class="btn" style="padding: 1rem 2rem;">
+                                <i class="fas fa-check"></i> Confirm Appointment
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Page -->
+        <div id="analyticsPage" class="hidden">
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-chart-bar"></i> Health Analytics Dashboard</h2>
+                    <button class="btn" onclick="generateAnalytics()">
+                        <i class="fas fa-sync"></i> Refresh Data
+                    </button>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem;">
+                    <div class="card">
+                        <h3><i class="fas fa-users"></i> Patient Distribution by Dosha</h3>
+                        <canvas id="doshaDistributionChart" style="max-height: 300px;"></canvas>
+                    </div>
+                    
+                    <div class="card">
+                        <h3><i class="fas fa-heartbeat"></i> Average Health Scores</h3>
+                        <canvas id="healthScoreChart" style="max-height: 300px;"></canvas>
+                    </div>
+                    
+                    <div class="card">
+                        <h3><i class="fas fa-calendar"></i> Monthly Appointments</h3>
+                        <canvas id="appointmentsChart" style="max-height: 300px;"></canvas>
+                    </div>
+                    
+                    <div class="card">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Common Health Concerns</h3>
+                        <canvas id="concernsChart" style="max-height: 300px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Page -->
+        <div id="settingsPage" class="hidden">
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-cog"></i> Settings</h2>
+                </div>
+                <div style="max-width: 600px;">
+                    <div class="form-group">
+                        <label>Language Preference</label>
+                        <select id="languagePreference">
+                            <option value="en">English</option>
+                            <option value="hi">Hindi</option>
+                            <option value="sa">Sanskrit</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Notification Preferences</label>
+                        <div style="margin-top: 0.5rem;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal; margin-bottom: 0.5rem;">
+                                <input type="checkbox" id="healthReminders" checked> Health Reminders
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal; margin-bottom: 0.5rem;">
+                                <input type="checkbox" id="appointmentNotifications" checked> Appointment Notifications
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal; margin-bottom: 0.5rem;">
+                                <input type="checkbox" id="marketingCommunications"> Marketing Communications
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Data Privacy</label>
+                        <div style="margin-top: 0.5rem;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal; margin-bottom: 0.5rem;">
+                                <input type="checkbox" id="researchData" checked> Allow data for research (anonymized)
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; font-weight: normal; margin-bottom: 0.5rem;">
+                                <input type="checkbox" id="shareWithProviders" checked> Share insights with healthcare providers
+                            </label>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="saveSettings()" style="margin-top: 1rem;">
+                        <i class="fas fa-save"></i> Save Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentUser = null;
+        let patients = JSON.parse(localStorage.getItem('ayursutra_patients')) || [];
+        let doctors = JSON.parse(localStorage.getItem('ayursutra_doctors')) || [];
+        let appointments = JSON.parse(localStorage.getItem('ayursutra_appointments')) || [];
+        let charts = {};
+        let currentTheme = localStorage.getItem('ayursutra_theme') || 'light';
+        let selectedDoctor = null;
+        let selectedTimeSlot = null;
+        let uploadedFiles = [];
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+            setupEventListeners();
+            loadTheme();
+            initializeDemoData();
+        });
+
+        function initializeApp() {
+            const savedUser = localStorage.getItem('ayursutra_user');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                showMainApp();
+            }
+        }
+
+        function setupEventListeners() {
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            document.getElementById('healthAssessmentForm').addEventListener('submit', handleHealthAssessment);
+            
+            // File upload
+            const fileInput = document.getElementById('fileInput');
+            const fileUploadArea = document.getElementById('fileUploadArea');
+            
+            fileInput.addEventListener('change', handleFileUpload);
+            
+            fileUploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                fileUploadArea.classList.add('dragover');
+            });
+            
+            fileUploadArea.addEventListener('dragleave', () => {
+                fileUploadArea.classList.remove('dragover');
+            });
+            
+            fileUploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                fileUploadArea.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                handleFileUpload({ target: { files } });
+            });
+
+            // Date input minimum date (today)
+            const today = new Date().toISOString().split('T')[0];
+            const dateInput = document.getElementById('appointmentDate');
+            if (dateInput) {
+                dateInput.min = today;
+                dateInput.addEventListener('change', updateTimeSlots);
+            }
+        }
+
+        // Authentication
+        function handleLogin(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Demo authentication with different roles
+            if ((username === 'patient' && password === 'password') ||
+                (username === 'doctor' && password === 'password') ||
+                (username === 'admin' && password === 'password')) {
+                
+                currentUser = {
+                    username: username,
+                    role: username,
+                    loginTime: new Date().toISOString()
+                };
+                
+                localStorage.setItem('ayursutra_user', JSON.stringify(currentUser));
+                showMainApp();
+                showNotification(`Welcome ${username.charAt(0).toUpperCase() + username.slice(1)}!`, 'success');
+            } else {
+                showNotification('Invalid credentials. Try: patient/password, doctor/password, or admin/password', 'error');
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('ayursutra_user');
+            currentUser = null;
+            
+            document.getElementById('header').classList.add('hidden');
+            document.getElementById('mainContent').classList.add('hidden');
+            document.getElementById('loginContainer').classList.remove('hidden');
+            
+            closeSidebar();
+            showNotification('Logged out successfully', 'success');
+        }
+
+        function showMainApp() {
+            document.getElementById('loginContainer').classList.add('hidden');
+            document.getElementById('header').classList.remove('hidden');
+            document.getElementById('mainContent').classList.remove('hidden');
+            
+            setTimeout(() => {
+                document.getElementById('mainContent').classList.add('show');
+            }, 100);
+            
+            setupRoleBasedNavigation();
+            showPage('home');
+            updateHeaderInfo();
+        }
+
+        function setupRoleBasedNavigation() {
+            const sidebarNav = document.getElementById('sidebarNav');
+            const role = currentUser.role;
+            
+            let navItems = '';
+            
+            // Common navigation items
+            navItems += `
+                <button class="sidebar-item active" onclick="showPage('home')" data-page="home">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </button>
+            `;
+            
+            if (role === 'patient') {
+                navItems += `
+                    <button class="sidebar-item" onclick="showPage('patient')" data-page="patient">
+                        <i class="fas fa-user-heart"></i>
+                        <span>Health Assessment</span>
+                    </button>
+                    <button class="sidebar-item" onclick="showPage('booking')" data-page="booking">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Book Appointment</span>
+                    </button>
+                `;
+            } else if (role === 'doctor') {
+                navItems += `
+                    <button class="sidebar-item" onclick="showPage('hospital')" data-page="hospital">
+                        <i class="fas fa-hospital"></i>
+                        <span>Patient Records</span>
+                    </button>
+                    <button class="sidebar-item" onclick="showPage('analytics')" data-page="analytics">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Analytics</span>
+                    </button>
+                `;
+            } else if (role === 'admin') {
+                navItems += `
+                    <button class="sidebar-item" onclick="showPage('patient')" data-page="patient">
+                        <i class="fas fa-user-heart"></i>
+                        <span>Patient Portal</span>
+                    </button>
+                    <button class="sidebar-item" onclick="showPage('hospital')" data-page="hospital">
+                        <i class="fas fa-hospital"></i>
+                        <span>Healthcare Provider</span>
+                    </button>
+                    <button class="sidebar-item" onclick="showPage('booking')" data-page="booking">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Appointments</span>
+                    </button>
+                    <button class="sidebar-item" onclick="showPage('analytics')" data-page="analytics">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Analytics</span>
+                    </button>
+                `;
+            }
+            
+            navItems += `
+                <button class="sidebar-item" onclick="showPage('settings')" data-page="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </button>
+            `;
+            
+            sidebarNav.innerHTML = navItems;
+        }
+
+        function updateHeaderInfo() {
+            document.getElementById('userRole').textContent = `${currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1)} Portal`;
+        }
+
+        // Navigation
+        function showPage(pageId) {
+            const pages = ['homePage', 'patientPage', 'hospitalPage', 'bookingPage', 'analyticsPage', 'settingsPage'];
+            pages.forEach(page => {
+                document.getElementById(page).classList.add('hidden');
+            });
+            
+            document.getElementById(pageId + 'Page').classList.remove('hidden');
+            
+            // Update sidebar active state
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            const activeItem = document.querySelector(`[data-page="${pageId}"]`);
+            if (activeItem) {
+                activeItem.classList.add('active');
+            }
+            
+            // Show admin panel for admin users in hospital page
+            if (pageId === 'hospital' && currentUser.role === 'admin') {
+                document.getElementById('adminPanel').classList.remove('hidden');
+                loadDoctors();
+            } else if (pageId === 'hospital') {
+                document.getElementById('adminPanel').classList.add('hidden');
+            }
+            
+            // Load specific page data
+            if (pageId === 'booking') {
+                loadAvailableDoctors();
+            } else if (pageId === 'hospital') {
+                refreshPatientData();
+            } else if (pageId === 'analytics') {
+                generateAnalytics();
+            }
+            
+            closeSidebar();
+        }
+
+        // Sidebar functions
+        function openSidebar() {
+            document.getElementById('sidebar').classList.add('active');
+            document.getElementById('sidebarOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('sidebarOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Theme toggle
+        function toggleTheme() {
+            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.body.setAttribute('data-theme', currentTheme);
+            localStorage.setItem('ayursutra_theme', currentTheme);
+            showNotification(`Switched to ${currentTheme} theme`, 'success');
+        }
+
+        function loadTheme() {
+            document.body.setAttribute('data-theme', currentTheme);
+        }
+
+        // Health Assessment
+        function handleHealthAssessment(e) {
+            e.preventDefault();
+            
+            const formData = {
+                id: Date.now().toString(),
+                fullName: document.getElementById('fullName').value,
+                age: parseInt(document.getElementById('age').value),
+                gender: document.getElementById('gender').value,
+                weight: parseFloat(document.getElementById('weight').value),
+                height: parseFloat(document.getElementById('height').value),
+                bodyType: document.getElementById('bodyType').value,
+                skinType: document.getElementById('skinType').value,
+                energyLevel: document.getElementById('energyLevel').value,
+                sleepPattern: document.getElementById('sleepPattern').value,
+                stressResponse: document.getElementById('stressResponse').value,
+                appetite: document.getElementById('appetite').value,
+                activityLevel: document.getElementById('activityLevel').value,
+                dietType: document.getElementById('dietType').value,
+                additionalNotes: document.getElementById('additionalNotes').value,
+                concerns: Array.from(document.querySelectorAll('input[name="concerns"]:checked')).map(cb => cb.value),
+                timestamp: new Date().toISOString(),
+                uploadedFiles: uploadedFiles
+            };
+
+            const analysis = calculateDoshaAnalysis(formData);
+            formData.analysis = analysis;
+            
+            // Save patient data
+            const existingPatientIndex = patients.findIndex(p => p.fullName === formData.fullName);
+            if (existingPatientIndex >= 0) {
+                patients[existingPatientIndex] = formData;
+            } else {
+                patients.push(formData);
+            }
+            localStorage.setItem('ayursutra_patients', JSON.stringify(patients));
+            
+            displayHealthResults(analysis);
+            showNotification('Health assessment completed successfully!', 'success');
+        }
+
+        function calculateDoshaAnalysis(data) {
+            let scores = { vata: 0, pitta: 0, kapha: 0 };
+            
+            const weights = {
+                bodyType: 5,
+                skinType: 4,
+                energyLevel: 4,
+                sleepPattern: 4,
+                stressResponse: 3,
+                appetite: 3
+            };
+
+            Object.keys(weights).forEach(key => {
+                if (data[key]) {
+                    const weight = weights[key];
+                    if (data[key] === 'vata') scores.vata += weight;
+                    else if (data[key] === 'pitta') scores.pitta += weight;
+                    else if (data[key] === 'kapha') scores.kapha += weight;
+                }
+            });
+
+            const bmi = data.weight / Math.pow(data.height / 100, 2);
+            if (bmi < 18.5) scores.vata += 3;
+            else if (bmi > 30) scores.kapha += 3;
+            else scores.pitta += 1;
+
+            data.concerns.forEach(concern => {
+                switch(concern) {
+                    case 'anxiety':
+                    case 'insomnia':
+                        scores.vata += 2;
+                        break;
+                    case 'digestive':
+                    case 'skin':
+                        scores.pitta += 2;
+                        break;
+                    case 'fatigue':
+                    case 'joint':
+                        scores.kapha += 2;
+                        break;
+                }
+            });
+
+            const total = Math.max(scores.vata + scores.pitta + scores.kapha, 1);
+            const percentages = {
+                vata: Math.round((scores.vata / total) * 100),
+                pitta: Math.round((scores.pitta / total) * 100),
+                kapha: Math.round((scores.kapha / total) * 100)
+            };
+
+            let healthScore = 85;
+            healthScore -= data.concerns.length * 5;
+            if (data.activityLevel === 'active') healthScore += 10;
+            else if (data.activityLevel === 'sedentary') healthScore -= 10;
+            
+            if (bmi < 18.5 || bmi > 30) healthScore -= 10;
+            if (data.age > 60) healthScore -= 5;
+            
+            healthScore = Math.max(20, Math.min(100, healthScore));
+
+            return {
+                doshaPercentages: percentages,
+                healthScore: healthScore,
+                bmi: parseFloat(bmi.toFixed(1)),
+                dominantDosha: Object.keys(percentages).reduce((a, b) => percentages[a] > percentages[b] ? a : b),
+                recommendations: generateRecommendations(percentages, data.concerns),
+                riskFactors: identifyRiskFactors(data, bmi)
+            };
+        }
+
+        function generateRecommendations(doshas, concerns) {
+            const dominant = Object.keys(doshas).reduce((a, b) => doshas[a] > doshas[b] ? a : b);
+            
+            const recommendations = {
+                vata: {
+                    diet: ['Favor warm, cooked foods', 'Include healthy fats like ghee and olive oil', 'Use warming spices like ginger and cinnamon', 'Eat regular meals at consistent times'],
+                    lifestyle: ['Maintain regular daily routine', 'Practice gentle yoga or tai chi', 'Get 7-8 hours of sleep', 'Stay warm and avoid cold weather'],
+                    herbs: ['Ashwagandha for stress and anxiety', 'Warm sesame oil massage', 'Herbal teas with chamomile', 'Triphala for digestion']
+                },
+                pitta: {
+                    diet: ['Favor cool, sweet foods', 'Avoid spicy and acidic foods', 'Eat fresh fruits and vegetables', 'Drink plenty of cool water'],
+                    lifestyle: ['Practice meditation and relaxation', 'Avoid excessive heat and sun', 'Exercise during cooler hours', 'Maintain work-life balance'],
+                    herbs: ['Aloe vera for cooling', 'Coconut oil massage', 'Rose water for skin', 'Brahmi for mental clarity']
+                },
+                kapha: {
+                    diet: ['Favor light, spicy foods', 'Reduce heavy, oily foods', 'Include plenty of vegetables', 'Drink warm water with honey'],
+                    lifestyle: ['Regular vigorous exercise', 'Wake up early (before 6 AM)', 'Stay active throughout the day', 'Practice energizing breathing exercises'],
+                    herbs: ['Ginger for circulation and digestion', 'Dry brushing before shower', 'Steam treatments', 'Turmeric for inflammation']
+                }
+            };
+
+            // Add specific recommendations based on health concerns
+            const specificRecs = {
+                diet: [...recommendations[dominant].diet],
+                lifestyle: [...recommendations[dominant].lifestyle],
+                herbs: [...recommendations[dominant].herbs]
+            };
+
+            if (concerns.includes('digestive')) {
+                specificRecs.diet.push('Eat mindfully and chew thoroughly');
+                specificRecs.herbs.push('Fennel tea after meals');
+            }
+            if (concerns.includes('anxiety')) {
+                specificRecs.lifestyle.push('Practice daily meditation');
+                specificRecs.herbs.push('Jatamansi for calm mind');
+            }
+            if (concerns.includes('insomnia')) {
+                specificRecs.lifestyle.push('Create bedtime routine');
+                specificRecs.herbs.push('Shankhpushpi for better sleep');
+            }
+
+            return specificRecs;
+        }
+
+        function identifyRiskFactors(data, bmi) {
+            const risks = [];
+            
+            if (bmi < 18.5) risks.push('Underweight - may indicate poor nutrition');
+            if (bmi > 30) risks.push('Obesity - increased risk of chronic diseases');
+            if (data.concerns.length > 3) risks.push('Multiple health concerns require attention');
+            if (data.activityLevel === 'sedentary') risks.push('Sedentary lifestyle increases health risks');
+            if (data.age > 50 && data.concerns.includes('joint')) risks.push('Joint issues may worsen with age');
+            
+            return risks;
+        }
+
+        function displayHealthResults(analysis) {
+            document.getElementById('healthResults').classList.remove('hidden');
+            
+            animateNumber(document.getElementById('healthScoreValue'), analysis.healthScore);
+            createDoshaChart(analysis.doshaPercentages);
+            displayDoshaBreakdown(analysis.doshaPercentages, analysis.dominantDosha);
+            displayRecommendations(analysis.recommendations);
+            
+            document.getElementById('healthResults').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function animateNumber(element, target) {
+            let current = 0;
+            const increment = target / 50;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current);
+                }
+            }, 20);
+        }
+
+        function createDoshaChart(percentages) {
+            const ctx = document.getElementById('doshaChart').getContext('2d');
+            
+            if (charts.dosha) {
+                charts.dosha.destroy();
+            }
+
+            charts.dosha = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Vata (Air)', 'Pitta (Fire)', 'Kapha (Earth)'],
+                    datasets: [{
+                        data: [percentages.vata, percentages.pitta, percentages.kapha],
+                        backgroundColor: ['#fbbf24', '#ef4444', '#3b82f6'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                font: { size: 14 }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function displayDoshaBreakdown(percentages, dominant) {
+            const container = document.getElementById('doshaBreakdown');
+            const doshaInfo = {
+                vata: { element: 'Air & Space', traits: 'Movement, Creativity, Flexibility' },
+                pitta: { element: 'Fire & Water', traits: 'Metabolism, Intelligence, Focus' },
+                kapha: { element: 'Earth & Water', traits: 'Structure, Stability, Immunity' }
+            };
+            
+            container.innerHTML = `
+                <h3 style="margin-bottom: 1rem;">Constitution Analysis</h3>
+                <div style="margin-bottom: 1rem;">
+                    ${Object.keys(percentages).map(dosha => `
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                            <div>
+                                <strong>${dosha.charAt(0).toUpperCase() + dosha.slice(1)}:</strong> ${percentages[dosha]}%<br>
+                                <small style="color: var(--muted);">${doshaInfo[dosha].element} - ${doshaInfo[dosha].traits}</small>
+                            </div>
+                            <div style="width: 120px; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden;">
+                                <div style="width: ${percentages[dosha]}%; height: 100%; background: ${dosha === 'vata' ? '#fbbf24' : dosha === 'pitta' ? '#ef4444' : '#3b82f6'}; transition: width 1s ease;"></div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div style="background: rgba(79, 70, 229, 0.1); padding: 1rem; border-radius: 12px;">
+                    <h4 style="color: var(--primary); margin-bottom: 0.5rem;">Primary Constitution</h4>
+                    <p style="margin: 0;"><strong>${dominant.toUpperCase()}</strong> dominant constitution</p>
+                    <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem; color: var(--muted);">
+                        This means you have a natural tendency toward ${doshaInfo[dominant].traits.toLowerCase()}.
+                    </p>
+                </div>
+            `;
+        }
+
+        function displayRecommendations(recommendations) {
+            const container = document.getElementById('recommendations');
+            container.innerHTML = `
+                <div style="background: rgba(16, 185, 129, 0.1); padding: 1.5rem; border-radius: 12px;">
+                    <h4 style="color: var(--secondary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-apple-alt"></i> Diet Guidelines
+                    </h4>
+                    <ul style="margin: 0; padding-left: 1.5rem; line-height: 1.6;">
+                        ${recommendations.diet.map(item => `<li style="margin-bottom: 0.5rem;">${item}</li>`).join('')}
+                    </ul>
+                </div>
+                <div style="background: rgba(239, 68, 68, 0.1); padding: 1.5rem; border-radius: 12px;">
+                    <h4 style="color: var(--danger); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-spa"></i> Lifestyle Practices
+                    </h4>
+                    <ul style="margin: 0; padding-left: 1.5rem; line-height: 1.6;">
+                        ${recommendations.lifestyle.map(item => `<li style="margin-bottom: 0.5rem;">${item}</li>`).join('')}
+                    </ul>
+                </div>
+                <div style="background: rgba(245, 158, 11, 0.1); padding: 1.5rem; border-radius: 12px;">
+                    <h4 style="color: var(--warning); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-leaf"></i> Herbal Support
+                    </h4>
+                    <ul style="margin: 0; padding-left: 1.5rem; line-height: 1.6;">
+                        ${recommendations.herbs.map(item => `<li style="margin-bottom: 0.5rem;">${item}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+        }
+
+        // File Upload Handling
+        function handleFileUpload(event) {
+            const files = event.target.files;
+            const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+            
+            Array.from(files).forEach(file => {
+                if (allowedTypes.includes(file.type)) {
+                    const fileData = {
+                        name: file.name,
+                        size: file.size,
+                        type: file.type,
+                        uploadDate: new Date().toISOString(),
+                        id: Date.now() + Math.random()
+                    };
+                    
+                    uploadedFiles.push(fileData);
+                    showNotification(`File "${file.name}" uploaded successfully`, 'success');
+                } else {
+                    showNotification(`File "${file.name}" is not supported`, 'error');
+                }
+            });
+            
+            displayUploadedFiles();
+        }
+
+        function displayUploadedFiles() {
+            const container = document.getElementById('uploadedFiles');
+            if (uploadedFiles.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            container.innerHTML = `
+                <h4 style="margin: 1rem 0;">Uploaded Files</h4>
+                ${uploadedFiles.map(file => `
+                    <div class="file-item">
+                        <div>
+                            <i class="fas fa-file"></i>
+                            <span style="margin-left: 0.5rem;">${file.name}</span>
+                            <small style="color: var(--muted); margin-left: 1rem;">${(file.size / 1024).toFixed(1)} KB</small>
+                        </div>
+                        <button class="btn-danger" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;" onclick="removeFile('${file.id}')">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        function removeFile(fileId) {
+            uploadedFiles = uploadedFiles.filter(file => file.id !== fileId);
+            displayUploadedFiles();
+            showNotification('File removed', 'success');
+        }
+
+        // Doctor Management
+        function loadDoctors() {
+            const container = document.getElementById('doctorsGrid');
+            if (doctors.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: var(--muted); grid-column: 1/-1;">No doctors added yet. Click "Add Doctor" to get started.</p>';
+                return;
+            }
+            
+            container.innerHTML = doctors.map(doctor => `
+                <div class="doctor-card">
+                    <div class="doctor-avatar">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <h4 style="text-align: center; margin-bottom: 0.5rem;">${doctor.name}</h4>
+                    <p style="text-align: center; color: var(--muted); margin-bottom: 1rem;">${doctor.specialization}</p>
+                    <div style="text-align: center; margin-bottom: 1rem;">
+                        <div style="margin-bottom: 0.5rem;"><i class="fas fa-clock"></i> ${doctor.experience} years experience</div>
+                        <div style="margin-bottom: 0.5rem;"><i class="fas fa-rupee-sign"></i> ${doctor.fee} consultation</div>
+                        <div style="font-size: 0.9rem; color: var(--muted);">
+                            ${doctor.availableDays.join(', ')}
+                        </div>
+                        <div style="font-size: 0.9rem; color: var(--muted);">
+                            ${doctor.startTime} - ${doctor.endTime}
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; justify-content: center;">
+                        <button class="btn-outline" onclick="editDoctor('${doctor.id}')" style="font-size: 0.8rem;">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn-danger" onclick="deleteDoctor('${doctor.id}')" style="font-size: 0.8rem;">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showAddDoctorForm() {
+            document.getElementById('addDoctorForm').classList.remove('hidden');
+            document.getElementById('addDoctorForm').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function hideAddDoctorForm() {
+            document.getElementById('addDoctorForm').classList.add('hidden');
+        }
+
+        function addDoctor(event) {
+            event.preventDefault();
+            
+            const doctorData = {
+                id: Date.now().toString(),
+                name: document.getElementById('doctorName').value,
+                specialization: document.getElementById('doctorSpecialization').value,
+                experience: parseInt(document.getElementById('doctorExperience').value),
+                fee: parseInt(document.getElementById('doctorFee').value),
+                availableDays: Array.from(document.querySelectorAll('input[name="availableDays"]:checked')).map(cb => cb.value),
+                startTime: document.getElementById('startTime').value,
+                endTime: document.getElementById('endTime').value,
+                createdAt: new Date().toISOString()
+            };
+            
+            doctors.push(doctorData);
+            localStorage.setItem('ayursutra_doctors', JSON.stringify(doctors));
+            
+            event.target.reset();
+            hideAddDoctorForm();
+            loadDoctors();
+            showNotification('Doctor added successfully!', 'success');
+        }
+
+        function deleteDoctor(doctorId) {
+            if (confirm('Are you sure you want to delete this doctor?')) {
+                doctors = doctors.filter(doctor => doctor.id !== doctorId);
+                localStorage.setItem('ayursutra_doctors', JSON.stringify(doctors));
+                loadDoctors();
+                showNotification('Doctor deleted successfully', 'success');
+            }
+        }
+
+        // Patient Management
+        function refreshPatientData() {
+            updateStatistics();
+            loadPatientsTable();
+        }
+
+        function updateStatistics() {
+            document.getElementById('totalPatients').textContent = patients.length;
+            
+            const today = new Date().toISOString().split('T')[0];
+            const todayAppointments = appointments.filter(apt => apt.date === today);
+            document.getElementById('activeAppointments').textContent = todayAppointments.length;
+            
+            const pendingReviews = patients.filter(p => p.analysis && p.analysis.healthScore < 60);
+            document.getElementById('pendingReviews').textContent = pendingReviews.length;
+            
+            const criticalAlerts = patients.filter(p => p.analysis && p.analysis.riskFactors && p.analysis.riskFactors.length > 0);
+            document.getElementById('criticalAlerts').textContent = criticalAlerts.length;
+        }
+
+        function loadPatientsTable() {
+            const tbody = document.getElementById('patientsTableBody');
+            if (patients.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--muted);">No patient records found</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = patients.map(patient => `
+                <tr>
+                    <td>${patient.fullName}</td>
+                    <td>${patient.age}</td>
+                    <td>${patient.analysis ? patient.analysis.dominantDosha.charAt(0).toUpperCase() + patient.analysis.dominantDosha.slice(1) : 'N/A'}</td>
+                    <td>${patient.analysis ? patient.analysis.healthScore : 'N/A'}</td>
+                    <td>${new Date(patient.timestamp).toLocaleDateString()}</td>
+                    <td>
+                        <span class="status-badge ${patient.analysis && patient.analysis.healthScore > 70 ? 'status-active' : 'status-pending'}">
+                            ${patient.analysis && patient.analysis.healthScore > 70 ? 'Healthy' : 'Needs Attention'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn-outline" onclick="viewPatientDetails('${patient.id}')" style="font-size: 0.8rem; padding: 0.25rem 0.5rem;">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function viewPatientDetails(patientId) {
+            const patient = patients.find(p => p.id === patientId);
+            if (!patient) return;
+            
+            showNotification(`Viewing details for ${patient.fullName}`, 'success');
+        }
+
+        // Appointment Booking
+        function loadAvailableDoctors() {
+            const container = document.getElementById('availableDoctors');
+            if (doctors.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; grid-column: 1/-1;">
+                        <i class="fas fa-user-md" style="font-size: 3rem; color: var(--muted); margin-bottom: 1rem;"></i>
+                        <h3>No Doctors Available</h3>
+                        <p style="color: var(--muted);">Please contact the administrator to add doctors to the system.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = doctors.map(doctor => `
+                <div class="doctor-card">
+                    <div class="doctor-avatar">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <h4 style="text-align: center; margin-bottom: 0.5rem;">${doctor.name}</h4>
+                    <p style="text-align: center; color: var(--primary); font-weight: 600; margin-bottom: 0.5rem;">${doctor.specialization}</p>
+                    <div style="text-align: center; margin-bottom: 1rem;">
+                        <div style="margin-bottom: 0.5rem;">
+                            <i class="fas fa-graduation-cap"></i> ${doctor.experience} years experience
+                        </div>
+                        <div style="margin-bottom: 0.5rem;">
+                            <i class="fas fa-rupee-sign"></i> ₹${doctor.fee} consultation
+                        </div>
+                        <div style="font-size: 0.9rem; color: var(--muted); margin-bottom: 0.5rem;">
+                            <i class="fas fa-calendar"></i> Available: ${doctor.availableDays.join(', ')}
+                        </div>
+                        <div style="font-size: 0.9rem; color: var(--muted);">
+                            <i class="fas fa-clock"></i> ${doctor.startTime} - ${doctor.endTime}
+                        </div>
+                    </div>
+                    <div style="text-align: center;">
+                        <button class="btn" onclick="selectDoctor('${doctor.id}')" style="width: 100%;">
+                            <i class="fas fa-calendar-plus"></i> Book Appointment
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectDoctor(doctorId) {
+            selectedDoctor = doctors.find(d => d.id === doctorId);
+            if (!selectedDoctor) return;
+            
+            document.getElementById('appointmentModal').classList.remove('hidden');
+            document.getElementById('selectedDoctorInfo').innerHTML = `
+                <div style="text-align: center;">
+                    <div class="doctor-avatar" style="margin: 0 auto 1rem;">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <h4>${selectedDoctor.name}</h4>
+                    <p style="color: var(--primary); font-weight: 600;">${selectedDoctor.specialization}</p>
+                    <p style="margin: 0.5rem 0;">₹${selectedDoctor.fee} per consultation</p>
+                </div>
+            `;
+            
+            // Set minimum date for appointment
+            const today = new Date();
+            today.setDate(today.getDate() + 1); // Tomorrow
+            document.getElementById('appointmentDate').min = today.toISOString().split('T')[0];
+            
+            updateTimeSlots();
+        }
+
+        function closeAppointmentModal() {
+            document.getElementById('appointmentModal').classList.add('hidden');
+            selectedDoctor = null;
+            selectedTimeSlot = null;
+        }
+
+        function updateTimeSlots() {
+            const dateInput = document.getElementById('appointmentDate');
+            const timeSlotsContainer = document.getElementById('timeSlots');
+            
+            if (!selectedDoctor || !dateInput.value) {
+                timeSlotsContainer.innerHTML = '<p style="color: var(--muted);">Please select a date first</p>';
+                return;
+            }
+            
+            const selectedDate = new Date(dateInput.value);
+            const dayName = selectedDate.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+            
+            if (!selectedDoctor.availableDays.includes(dayName)) {
+                timeSlotsContainer.innerHTML = '<p style="color: var(--danger);">Doctor is not available on this day</p>';
+                return;
+            }
+            
+            // Generate time slots
+            const startTime = selectedDoctor.startTime;
+            const endTime = selectedDoctor.endTime;
+            const slots = generateTimeSlots(startTime, endTime);
+            
+            // Filter out booked slots
+            const bookedSlots = appointments
+                .filter(apt => apt.doctorId === selectedDoctor.id && apt.date === dateInput.value)
+                .map(apt => apt.timeSlot);
+            
+            const availableSlots = slots.filter(slot => !bookedSlots.includes(slot));
+            
+            if (availableSlots.length === 0) {
+                timeSlotsContainer.innerHTML = '<p style="color: var(--warning);">No available slots on this date</p>';
+                return;
+            }
+            
+            timeSlotsContainer.innerHTML = availableSlots.map(slot => `
+                <span class="time-slot" onclick="selectTimeSlot('${slot}')">${slot}</span>
+            `).join('');
+        }
+
+        function generateTimeSlots(startTime, endTime) {
+            const slots = [];
+            const start = new Date(`2000-01-01T${startTime}`);
+            const end = new Date(`2000-01-01T${endTime}`);
+            
+            let current = new Date(start);
+            while (current < end) {
+                slots.push(current.toTimeString().slice(0, 5));
+                current.setMinutes(current.getMinutes() + 30); // 30-minute slots
+            }
+            
+            return slots;
+        }
+
+        function selectTimeSlot(timeSlot) {
+            selectedTimeSlot = timeSlot;
+            
+            // Update visual selection
+            document.querySelectorAll('.time-slot').forEach(slot => {
+                slot.classList.remove('selected');
+            });
+            event.target.classList.add('selected');
+        }
+
+        function bookAppointment(event) {
+            event.preventDefault();
+            
+            if (!selectedDoctor || !selectedTimeSlot) {
+                showNotification('Please select a doctor and time slot', 'error');
+                return;
+            }
+            
+            const appointmentData = {
+                id: Date.now().toString(),
+                doctorId: selectedDoctor.id,
+                doctorName: selectedDoctor.name,
+                patientName: document.getElementById('patientName').value,
+                contactNumber: document.getElementById('contactNumber').value,
+                email: document.getElementById('patientEmail').value,
+                date: document.getElementById('appointmentDate').value,
+                timeSlot: selectedTimeSlot,
+                reason: document.getElementById('visitReason').value,
+                status: 'scheduled',
+                createdAt: new Date().toISOString()
+            };
+            
+            appointments.push(appointmentData);
+            localStorage.setItem('ayursutra_appointments', JSON.stringify(appointments));
+            
+            closeAppointmentModal();
+            event.target.reset();
+            
+            showNotification(`Appointment booked successfully with Dr. ${selectedDoctor.name}!`, 'success');
+            
+            // Send notification (simulated)
+            setTimeout(() => {
+                showNotification('Appointment confirmation sent via SMS/Email', 'success');
+            }, 2000);
+        }
+
+        // Analytics
+        function generateAnalytics() {
+            if (patients.length === 0) {
+                document.querySelectorAll('#analyticsPage canvas').forEach(canvas => {
+                    const ctx = canvas.getContext('2d');
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillStyle = 'var(--muted)';
+                    ctx.font = '16px Inter';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('No data available', canvas.width / 2, canvas.height / 2);
+                });
+                return;
+            }
+            
+            generateDoshaDistributionChart();
+            generateHealthScoreChart();
+            generateAppointmentsChart();
+            generateConcernsChart();
+        }
+
+        function generateDoshaDistributionChart() {
+            const ctx = document.getElementById('doshaDistributionChart').getContext('2d');
+            
+            if (charts.doshaDistribution) {
+                charts.doshaDistribution.destroy();
+            }
+            
+            const doshaCount = { vata: 0, pitta: 0, kapha: 0 };
+            patients.forEach(patient => {
+                if (patient.analysis) {
+                    doshaCount[patient.analysis.dominantDosha]++;
+                }
+            });
+            
+            charts.doshaDistribution = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Vata', 'Pitta', 'Kapha'],
+                    datasets: [{
+                        data: [doshaCount.vata, doshaCount.pitta, doshaCount.kapha],
+                        backgroundColor: ['#fbbf24', '#ef4444', '#3b82f6']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        function generateHealthScoreChart() {
+            const ctx = document.getElementById('healthScoreChart').getContext('2d');
+            
+            if (charts.healthScore) {
+                charts.healthScore.destroy();
+            }
+            
+            const scoreRanges = { 'Excellent (80-100)': 0, 'Good (60-79)': 0, 'Fair (40-59)': 0, 'Poor (0-39)': 0 };
+            
+            patients.forEach(patient => {
+                if (patient.analysis) {
+                    const score = patient.analysis.healthScore;
+                    if (score >= 80) scoreRanges['Excellent (80-100)']++;
+                    else if (score >= 60) scoreRanges['Good (60-79)']++;
+                    else if (score >= 40) scoreRanges['Fair (40-59)']++;
+                    else scoreRanges['Poor (0-39)']++;
+                }
+            });
+            
+            charts.healthScore = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(scoreRanges),
+                    datasets: [{
+                        label: 'Patients',
+                        data: Object.values(scoreRanges),
+                        backgroundColor: ['#22c55e', '#f59e0b', '#ef4444', '#dc2626']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        function generateAppointmentsChart() {
+            const ctx = document.getElementById('appointmentsChart').getContext('2d');
+            
+            if (charts.appointments) {
+                charts.appointments.destroy();
+            }
+            
+            // Generate last 6 months data
+            const monthlyData = {};
+            const currentDate = new Date();
+            
+            for (let i = 5; i >= 0; i--) {
+                const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
+                const monthKey = date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+                monthlyData[monthKey] = 0;
+            }
+            
+            appointments.forEach(appointment => {
+                const appointmentDate = new Date(appointment.date);
+                const monthKey = appointmentDate.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+                if (monthlyData.hasOwnProperty(monthKey)) {
+                    monthlyData[monthKey]++;
+                }
+            });
+            
+            charts.appointments = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Object.keys(monthlyData),
+                    datasets: [{
+                        label: 'Appointments',
+                        data: Object.values(monthlyData),
+                        borderColor: '#4f46e5',
+                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        function generateConcernsChart() {
+            const ctx = document.getElementById('concernsChart').getContext('2d');
+            
+            if (charts.concerns) {
+                charts.concerns.destroy();
+            }
+            
+            const concernsCount = {};
+            patients.forEach(patient => {
+                if (patient.concerns) {
+                    patient.concerns.forEach(concern => {
+                        concernsCount[concern] = (concernsCount[concern] || 0) + 1;
+                    });
+                }
+            });
+            
+            const sortedConcerns = Object.entries(concernsCount)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 6); // Top 6 concerns
+            
+            if (sortedConcerns.length === 0) {
+                const ctx = document.getElementById('concernsChart').getContext('2d');
+                ctx.fillStyle = 'var(--muted)';
+                ctx.font = '16px Inter';
+                ctx.textAlign = 'center';
+                ctx.fillText('No health concerns data', ctx.canvas.width / 2, ctx.canvas.height / 2);
+                return;
+            }
+            
+            charts.concerns = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: sortedConcerns.map(([concern]) => concern.charAt(0).toUpperCase() + concern.slice(1)),
+                    datasets: [{
+                        data: sortedConcerns.map(([,count]) => count),
+                        backgroundColor: [
+                            '#ef4444', '#f59e0b', '#10b981', 
+                            '#3b82f6', '#8b5cf6', '#ec4899'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Settings
+        function saveSettings() {
+            const settings = {
+                language: document.getElementById('languagePreference').value,
+                healthReminders: document.getElementById('healthReminders').checked,
+                appointmentNotifications: document.getElementById('appointmentNotifications').checked,
+                marketingCommunications: document.getElementById('marketingCommunications').checked,
+                researchData: document.getElementById('researchData').checked,
+                shareWithProviders: document.getElementById('shareWithProviders').checked
+            };
+            
+            localStorage.setItem('ayursutra_settings', JSON.stringify(settings));
+            showNotification('Settings saved successfully!', 'success');
+        }
+
+        function loadSettings() {
+            const settings = JSON.parse(localStorage.getItem('ayursutra_settings'));
+            if (settings) {
+                document.getElementById('languagePreference').value = settings.language || 'en';
+                document.getElementById('healthReminders').checked = settings.healthReminders !== false;
+                document.getElementById('appointmentNotifications').checked = settings.appointmentNotifications !== false;
+                document.getElementById('marketingCommunications').checked = settings.marketingCommunications || false;
+                document.getElementById('researchData').checked = settings.researchData !== false;
+                document.getElementById('shareWithProviders').checked = settings.shareWithProviders !== false;
+            }
+        }
+
+        // PDF Generation
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Get patient data
+            const patientName = document.getElementById('fullName').value || 'Patient';
+            const healthScore = document.getElementById('healthScoreValue').textContent;
+            
+            // Add content to PDF
+            doc.setFontSize(20);
+            doc.text('AyurSutra Health Report', 20, 30);
+            
+            doc.setFontSize(12);
+            doc.text(`Patient: ${patientName}`, 20, 50);
+            doc.text(`Health Score: ${healthScore}`, 20, 65);
+            doc.text(`Report Generated: ${new Date().toLocaleDateString()}`, 20, 80);
+            
+            doc.text('Dosha Constitution Analysis:', 20, 100);
+            // Add more content as needed
+            
+            doc.save(`${patientName}_AyurSutra_Report.pdf`);
+            showNotification('Health report downloaded successfully!', 'success');
+        }
+
+        // Utility Functions
+        function clearAssessment() {
+            if (confirm('Are you sure you want to clear the form? All entered data will be lost.')) {
+                document.getElementById('healthAssessmentForm').reset();
+                document.getElementById('healthResults').classList.add('hidden');
+                uploadedFiles = [];
+                displayUploadedFiles();
+                showNotification('Assessment form cleared', 'success');
+            }
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            
+            const icon = type === 'success' ? 'fa-check-circle' : 
+                        type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle';
+            
+            notification.innerHTML = `
+                <i class="fas ${icon}"></i>
+                ${message}
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => notification.classList.add('show'), 100);
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        function exportData() {
+            const data = {
+                patients: patients,
+                doctors: doctors,
+                appointments: appointments,
+                exportDate: new Date().toISOString(),
+                version: '1.0'
+            };
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `ayursutra_data_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+            
+            showNotification('Data exported successfully!', 'success');
+        }
+
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    try {
+                        const data = JSON.parse(event.target.result);
+                        
+                        if (data.patients) {
+                            patients = data.patients;
+                            localStorage.setItem('ayursutra_patients', JSON.stringify(patients));
+                        }
+                        if (data.doctors) {
+                            doctors = data.doctors;
+                            localStorage.setItem('ayursutra_doctors', JSON.stringify(doctors));
+                        }
+                        if (data.appointments) {
+                            appointments = data.appointments;
+                            localStorage.setItem('ayursutra_appointments', JSON.stringify(appointments));
+                        }
+                        
+                        showNotification('Data imported successfully!', 'success');
+                        refreshPatientData();
+                        loadDoctors();
+                    } catch (error) {
+                        showNotification('Error importing data. Please check the file format.', 'error');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+
+        // Initialize demo data
+        function initializeDemoData() {
+            // Add demo doctors if none exist
+            if (doctors.length === 0) {
+                const demoDoctors = [
+                    {
+                        id: 'demo_doctor_1',
+                        name: 'Dr. Rajesh Kumar',
+                        specialization: 'Panchakarma',
+                        experience: 15,
+                        fee: 1500,
+                        availableDays: ['monday', 'wednesday', 'friday'],
+                        startTime: '09:00',
+                        endTime: '17:00',
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 'demo_doctor_2',
+                        name: 'Dr. Priya Sharma',
+                        specialization: 'General',
+                        experience: 12,
+                        fee: 1200,
+                        availableDays: ['tuesday', 'thursday', 'saturday'],
+                        startTime: '10:00',
+                        endTime: '18:00',
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 'demo_doctor_3',
+                        name: 'Dr. Anil Gupta',
+                        specialization: 'Mental',
+                        experience: 20,
+                        fee: 2000,
+                        availableDays: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
+                        startTime: '09:30',
+                        endTime: '16:30',
+                        createdAt: new Date().toISOString()
+                    }
+                ];
+                
+                doctors = demoDoctors;
+                localStorage.setItem('ayursutra_doctors', JSON.stringify(doctors));
+            }
+            
+            // Add demo patients if none exist
+            if (patients.length === 0) {
+                const demoPatients = [
+                    {
+                        id: 'demo_patient_1',
+                        fullName: 'Ravi Kumar',
+                        age: 35,
+                        gender: 'male',
+                        weight: 70,
+                        height: 170,
+                        bodyType: 'pitta',
+                        skinType: 'pitta',
+                        energyLevel: 'pitta',
+                        sleepPattern: 'pitta',
+                        stressResponse: 'pitta',
+                        appetite: 'pitta',
+                        activityLevel: 'moderate',
+                        dietType: 'vegetarian',
+                        concerns: ['digestive', 'stress'],
+                        analysis: {
+                            doshaPercentages: { vata: 20, pitta: 50, kapha: 30 },
+                            healthScore: 78,
+                            dominantDosha: 'pitta',
+                            bmi: 24.2
+                        },
+                        timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+                    },
+                    {
+                        id: 'demo_patient_2',
+                        fullName: 'Priya Sharma',
+                        age: 28,
+                        gender: 'female',
+                        weight: 60,
+                        height: 165,
+                        bodyType: 'kapha',
+                        skinType: 'kapha',
+                        energyLevel: 'kapha',
+                        sleepPattern: 'kapha',
+                        stressResponse: 'kapha',
+                        appetite: 'kapha',
+                        activityLevel: 'moderate',
+                        dietType: 'vegetarian',
+                        concerns: ['fatigue'],
+                        analysis: {
+                            doshaPercentages: { vata: 15, pitta: 30, kapha: 55 },
+                            healthScore: 85,
+                            dominantDosha: 'kapha',
+                            bmi: 22.0
+                        },
+                        timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
+                    }
+                ];
+                
+                patients = demoPatients;
+                localStorage.setItem('ayursutra_patients', JSON.stringify(patients));
+            }
+        }
+
+        // Load settings on app initialization
+        setTimeout(() => {
+            loadSettings();
+        }, 1000);
+
+        // Auto-save functionality for forms
+        function autoSaveForm(formId) {
+            const form = document.getElementById(formId);
+            if (!form) return;
+            
+            const inputs = form.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                input.addEventListener('change', () => {
+                    const formData = new FormData(form);
+                    const data = Object.fromEntries(formData);
+                    localStorage.setItem(`autosave_${formId}`, JSON.stringify(data));
+                });
+            });
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.altKey && e.key === 'm') {
+                e.preventDefault();
+                if (document.getElementById('sidebar').classList.contains('active')) {
+                    closeSidebar();
+                } else {
+                    openSidebar();
+                }
+            }
+            
+            if (e.altKey && e.key === 't') {
+                e.preventDefault();
+                toggleTheme();
+            }
+            
+            if (e.key === 'Escape') {
+                closeSidebar();
+                closeAppointmentModal();
+            }
+        });
+
+        // Initialize auto-save for forms
+        setTimeout(() => {
+            autoSaveForm('healthAssessmentForm');
+        }, 2000);
+
+        // Notification scheduling system (demo)
+        function scheduleNotifications() {
+            // Simulate appointment reminders
+            appointments.forEach(appointment => {
+                const appointmentDate = new Date(appointment.date);
+                const now = new Date();
+                const timeDiff = appointmentDate.getTime() - now.getTime();
+                const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                
+                if (daysDiff === 1) {
+                    setTimeout(() => {
+                        showNotification(`Reminder: Appointment with ${appointment.doctorName} tomorrow at ${appointment.timeSlot}`, 'warning');
+                    }, 5000);
+                }
+            });
+        }
+
+        // Initialize notification system
+        setTimeout(scheduleNotifications, 3000);
+
+        // Performance monitoring
+        function trackPerformance() {
+            if (typeof performance !== 'undefined' && performance.timing) {
+                const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+                console.log(`AyurSutra loaded in ${loadTime}ms`);
+            }
+        }
+
+        window.addEventListener('load', trackPerformance);
+    </script>
+</body>
+</html>
